@@ -1,0 +1,36 @@
+post:
+  summary: Создание заказа
+  operationId: CreateOrder
+  tags:
+    - Orders
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../components/create_order_request.yaml'
+  responses:
+    '200':
+      description: Orders info
+      content:
+        application/json:
+          schema:
+            $ref: '../components/create_order_response.yaml'
+    '400':
+      description: Validation error
+      content:
+        application/json:
+          schema:
+            $ref: ../components/errors/bad_request_error.yaml
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: ../components/errors/internal_server_error.yaml
+    default:
+      description: Unexpected error
+      content:
+        application/json:
+          schema:
+            $ref: ../components/errors/generic_error.yaml

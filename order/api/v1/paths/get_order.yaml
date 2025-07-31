@@ -1,0 +1,33 @@
+parameters:
+  - $ref: ../params/order_uuid.yaml
+
+get:
+  summary: Получение заказа
+  operationId: GetOrder
+  tags:
+    - Orders
+  responses:
+    '200':
+      description: Order info
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/order.yaml'
+    '404':
+      description: Order not found
+      content:
+        application/json:
+          schema:
+            $ref: ../components/errors/not_found_error.yaml
+    '500':
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: ../components/errors/internal_server_error.yaml
+    default:
+      description: Unexpected error
+      content:
+        application/json:
+          schema:
+            $ref: ../components/errors/generic_error.yaml

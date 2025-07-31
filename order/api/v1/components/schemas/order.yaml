@@ -1,0 +1,64 @@
+type: object
+required:
+  - order_uuid
+  - user_uuid
+  - part_uuids
+  - total_price
+  - status
+properties:
+  order_uuid:
+    type: string
+    format: uuid
+    description: Уникальный идентификатор заказа
+  user_uuid:
+    type: string
+    format: uuid
+    description: UUID пользователя
+  part_uuids:
+    type: array
+    items:
+      type: string
+    description: Список UUID деталей
+  total_price:
+    type: number
+    format: double
+    description: Итоговая стоимость
+  transaction_uuid:
+    type: string
+    format: uuid
+    nullable: true
+    description: UUID транзакции (если оплачен)
+  payment_method:
+    type: string
+    description: Способ оплаты
+    enum:
+      - UNKNOWN
+      - CARD
+      - SBP
+      - CREDIT_CARD
+      - INVESTOR_MONEY
+    x-enumDescriptions:
+      UNKNOWN: Неизвестный способ
+      CARD: Банковская карта
+      SBP: Система быстрых платежей
+      CREDIT_CARD: Кредитная карта
+      INVESTOR_MONEY: Деньги инвестора
+    nullable: true
+  status:
+    type: string
+    description: Статус заказа
+    enum:
+      - PENDING_PAYMENT
+      - PAID
+      - CANCELLED
+    example: PENDING_PAYMENT
+example:
+  order_uuid: "333e4567-e89b-12d3-a456-426614174003"
+  user_uuid: "123e4567-e89b-12d3-a456-426614174000"
+  part_uuids:
+    - "111e4567-e89b-12d3-a456-426614174001"
+    - "222e4567-e89b-12d3-a456-426614174002"
+  total_price: 123.45
+  transaction_uuid: "444e4567-e89b-12d3-a456-426614174004"
+  payment_method: "CARD"
+  status: "PAID"

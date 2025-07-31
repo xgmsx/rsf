@@ -1,0 +1,14 @@
+type: object
+required:
+  - payment_method
+properties:
+  payment_method:
+    type: string
+    enum:
+      - "CARD"
+      - "SBP"
+      - "CREDIT_CARD"
+      - "INVESTOR_MONEY"
+    description: Метод оплаты
+example:
+  payment_method: "CARD"

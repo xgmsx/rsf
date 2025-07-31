@@ -21,12 +21,17 @@ profile.cov
 # vendor/
 
 # Go workspace file
-go.work
-go.work.sum
+#go.work
+#go.work.sum
 
 # env file
 .env
 
-# Editor/IDE
-# .idea/
-# .vscode/
+# IDE
+/.idea
+/.vscode
+/.cursor
+.DS_Store
+
+bin
+coverage

@@ -1,0 +1,15 @@
+.editorconfig
+bin
+deploy
+.idea
+.git
+.gitignore
+AUTHORS.md
+CONTRIBUTING.md
+LICENSE
+Makefile
+Taskfile.yml
+docker-compose.yaml
+README.md
+.env
+.env.example

@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+// Package payment.v1 содержит API для работы с сервисом Payment
+package payment.v1;
+
+import "google/api/annotations.proto";
+
+option go_package = "github.com/xgmsx/rsf/shared/pkg/proto/payment/v1;payment_v1";
+
+// Сервис платежей, необходим для оплаты заказов пользователями
+service PaymentService {
+  // Оплата заказа
+  rpc PayOrder(PayOrderRequest) returns (PayOrderResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/order/pay"
+    };
+  }
+}
+
+// Запрос на оплату заказа
+message PayOrderRequest {
+  string order_uuid = 1;
+  string user_uuid = 2;
+  PaymentMethod payment_method = 3;
+}
+
+// Ответ на запрос оплаты заказа
+message PayOrderResponse {
+  string transaction_uuid = 1;
+}
+
+// Метод оплаты
+enum PaymentMethod {
+  PAYMENT_METHOD_UNSPECIFIED = 0;
+  PAYMENT_METHOD_CARD = 1;
+  PAYMENT_METHOD_SBP = 2;
+  PAYMENT_METHOD_CREDIT_CARD = 3;
+  PAYMENT_METHOD_INVESTOR_MONEY = 4;
+}

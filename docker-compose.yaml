@@ -1,0 +1,42 @@
+services:
+
+  api-inventory:
+    build:
+      context: .
+      dockerfile: ./deploy/docker/Dockerfile
+      args:
+        GOLANG_VERSION: 1.24
+        ALPINE_VERSION: 3.21
+        SERVICE_PATH: inventory
+    env_file:
+      - .env
+    ports:
+      - "8081:8080"
+      - "50051:50051"
+
+  api-payment:
+    build:
+      context: .
+      dockerfile: ./deploy/docker/Dockerfile
+      args:
+        GOLANG_VERSION: 1.24
+        ALPINE_VERSION: 3.21
+        SERVICE_PATH: payment
+    env_file:
+      - .env
+    ports:
+      - "8082:8080"
+      - "50052:50051"
+
+  api-order:
+    build:
+      context: .
+      dockerfile: ./deploy/docker/Dockerfile
+      args:
+        GOLANG_VERSION: 1.24
+        ALPINE_VERSION: 3.21
+        SERVICE_PATH: order
+    env_file:
+      - .env
+    ports:
+      - "8083:8080"
