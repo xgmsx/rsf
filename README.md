@@ -3,6 +3,8 @@
 ## Quick start
 
 ```console
+cp .env.example .env
+
 docker-compose up -d --build
 ```
 
