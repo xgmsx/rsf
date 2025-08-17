@@ -13,7 +13,7 @@ WORKDIR $APP/${SERVICE_PATH}
 # Make binary files
 RUN mkdir -p $APP/bin && \
     go mod download && \
-    go build -v -o $APP/bin/app .
+    go build -v -o $APP/bin/app ./cmd/main.go
 
 FROM alpine:${ALPINE_VERSION} AS rutime
 ENV APP=/app

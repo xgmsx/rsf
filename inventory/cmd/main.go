@@ -4,8 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	inventoryV1 "github.com/xgmsx/rsf/shared/pkg/proto/inventory/v1"
-	"github.com/xgmsx/rsf/shared/pkg/swagger"
 	"log"
 	"net"
 	"net/http"
@@ -14,41 +12,23 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"
-	"google.golang.org/grpc/status"
 
+	partApiV1 "github.com/xgmsx/rsf/inventory/internal/api/v1/part"
+	partRepo "github.com/xgmsx/rsf/inventory/internal/repository/part"
+	partService "github.com/xgmsx/rsf/inventory/internal/service/part"
 	"github.com/xgmsx/rsf/shared/pkg/interceptor"
-	paymentV1 "github.com/xgmsx/rsf/shared/pkg/proto/payment/v1"
+	inventoryV1 "github.com/xgmsx/rsf/shared/pkg/proto/inventory/v1"
+	"github.com/xgmsx/rsf/shared/pkg/swagger"
 )
 
 const (
 	grpcPort = 50051
 	httpPort = 8080
 )
-
-type PaymentService struct {
-	paymentV1.UnimplementedPaymentServiceServer
-}
-
-func NewPaymentService() *PaymentService {
-	return &PaymentService{}
-}
-
-func (s *PaymentService) PayOrder(_ context.Context, request *paymentV1.PayOrderRequest) (*paymentV1.PayOrderResponse, error) {
-	if request.PaymentMethod == paymentV1.PaymentMethod_PAYMENT_METHOD_UNSPECIFIED {
-		return nil, status.Error(codes.InvalidArgument, "invalid payment method provided")
-	}
-	transactionUUID := uuid.New()
-	log.Printf("processing request=%v with transactionUUID=%v", request, transactionUUID)
-	return &paymentV1.PayOrderResponse{
-		TransactionUuid: transactionUUID.String(),
-	}, nil
-}
 
 func main() {
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", grpcPort))
@@ -62,8 +42,10 @@ func main() {
 		}
 	}()
 
-	// Инициализируем сервисный слой
-	service := NewPaymentService()
+	// Инициализируем слои приложения
+	repo := partRepo.NewPartRepository()
+	service := partService.NewPartService(repo)
+	api := partApiV1.NewPartAPI(service)
 
 	// Инициализируем gRPC сервер
 	server := grpc.NewServer(
@@ -71,7 +53,7 @@ func main() {
 			grpc.UnaryServerInterceptor(interceptor.LoggerInterceptor()),
 		),
 	)
-	paymentV1.RegisterPaymentServiceServer(server, service)
+	inventoryV1.RegisterInventoryServiceServer(server, api)
 	reflection.Register(server)
 
 	// Запускаем gRPC сервер
@@ -107,7 +89,7 @@ func main() {
 		httpMux.Handle("/api/", mux)
 
 		httpMux.Handle("/swagger/", swagger.NewSwaggerHandler(
-			"/swagger/", "payment.swagger.json", "api"))
+			"/swagger/", "inventory.swagger.json", "api"))
 
 		httpMux.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			if r.URL.Path == "/" {
@@ -118,7 +100,7 @@ func main() {
 		}))
 
 		// Создаем HTTP gateway сервер
-		var gwServer = &http.Server{
+		gwServer := &http.Server{
 			Addr:              fmt.Sprintf(":%d", httpPort),
 			Handler:           httpMux,
 			ReadHeaderTimeout: 10 * time.Second,

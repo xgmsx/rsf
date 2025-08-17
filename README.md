@@ -3,6 +3,8 @@
 ## Quick start
 
 ```console
+git clone https://github.com/xgmsx/rsf.git .
+
 cp .env.example .env
 
 docker-compose up -d --build
