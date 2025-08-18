@@ -24,7 +24,7 @@ const (
 type Order struct {
 	OrderUUID       uuid.UUID
 	UserUUID        uuid.UUID
-	PartUUIDs       []string
+	PartUUIDs       []uuid.UUID
 	TotalPrice      float64
 	TransactionUUID *uuid.UUID
 	PaymentMethod   *PaymentMethod

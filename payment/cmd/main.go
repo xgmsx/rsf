@@ -20,8 +20,8 @@ import (
 	paymentApiV1 "github.com/xgmsx/rsf/payment/internal/api/v1/payment"
 	"github.com/xgmsx/rsf/payment/internal/service/payment"
 	"github.com/xgmsx/rsf/shared/pkg/interceptor"
-	inventoryV1 "github.com/xgmsx/rsf/shared/pkg/proto/inventory/v1"
-	paymentV1 "github.com/xgmsx/rsf/shared/pkg/proto/payment/v1"
+	genInventoryV1 "github.com/xgmsx/rsf/shared/pkg/proto/inventory/v1"
+	genPaymentV1 "github.com/xgmsx/rsf/shared/pkg/proto/payment/v1"
 	"github.com/xgmsx/rsf/shared/pkg/swagger"
 )
 
@@ -52,7 +52,7 @@ func main() {
 			grpc.UnaryServerInterceptor(interceptor.LoggerInterceptor()),
 		),
 	)
-	paymentV1.RegisterPaymentServiceServer(server, api)
+	genPaymentV1.RegisterPaymentServiceServer(server, api)
 	reflection.Register(server)
 
 	// Запускаем gRPC сервер
@@ -72,7 +72,7 @@ func main() {
 
 		// Создаем мультиплексор для HTTP запросов в gRPC-gateway
 		mux := runtime.NewServeMux()
-		err = inventoryV1.RegisterInventoryServiceHandlerFromEndpoint(
+		err = genInventoryV1.RegisterInventoryServiceHandlerFromEndpoint(
 			ctx,
 			mux,
 			fmt.Sprintf("localhost:%d", grpcPort),

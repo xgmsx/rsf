@@ -24,6 +24,7 @@
                   "part_uuids": {
                     "description": "Массив UUID выбранных деталей",
                     "items": {
+                      "format": "uuid",
                       "type": "string"
                     },
                     "type": "array"
@@ -183,6 +184,7 @@
                     "part_uuids": {
                       "description": "Список UUID деталей",
                       "items": {
+                        "format": "uuid",
                         "type": "string"
                       },
                       "type": "array"

@@ -85,7 +85,7 @@ type CreateOrderRequest struct {
 	// UUID пользователя, создающего заказ.
 	UserUUID uuid.UUID `json:"user_uuid"`
 	// Массив UUID выбранных деталей.
-	PartUuids []string `json:"part_uuids"`
+	PartUuids []uuid.UUID `json:"part_uuids"`
 }
 
 // GetUserUUID returns the value of UserUUID.
@@ -94,7 +94,7 @@ func (s *CreateOrderRequest) GetUserUUID() uuid.UUID {
 }
 
 // GetPartUuids returns the value of PartUuids.
-func (s *CreateOrderRequest) GetPartUuids() []string {
+func (s *CreateOrderRequest) GetPartUuids() []uuid.UUID {
 	return s.PartUuids
 }
 
@@ -104,7 +104,7 @@ func (s *CreateOrderRequest) SetUserUUID(val uuid.UUID) {
 }
 
 // SetPartUuids sets the value of PartUuids.
-func (s *CreateOrderRequest) SetPartUuids(val []string) {
+func (s *CreateOrderRequest) SetPartUuids(val []uuid.UUID) {
 	s.PartUuids = val
 }
 
@@ -482,7 +482,7 @@ type Order struct {
 	// UUID пользователя.
 	UserUUID uuid.UUID `json:"user_uuid"`
 	// Список UUID деталей.
-	PartUuids []string `json:"part_uuids"`
+	PartUuids []uuid.UUID `json:"part_uuids"`
 	// Итоговая стоимость.
 	TotalPrice float64 `json:"total_price"`
 	// UUID транзакции (если оплачен).
@@ -504,7 +504,7 @@ func (s *Order) GetUserUUID() uuid.UUID {
 }
 
 // GetPartUuids returns the value of PartUuids.
-func (s *Order) GetPartUuids() []string {
+func (s *Order) GetPartUuids() []uuid.UUID {
 	return s.PartUuids
 }
 
@@ -539,7 +539,7 @@ func (s *Order) SetUserUUID(val uuid.UUID) {
 }
 
 // SetPartUuids sets the value of PartUuids.
-func (s *Order) SetPartUuids(val []string) {
+func (s *Order) SetPartUuids(val []uuid.UUID) {
 	s.PartUuids = val
 }
 

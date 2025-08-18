@@ -257,7 +257,7 @@ func (s *CreateOrderRequest) encodeFields(e *jx.Encoder) {
 		e.FieldStart("part_uuids")
 		e.ArrStart()
 		for _, elem := range s.PartUuids {
-			e.Str(elem)
+			json.EncodeUUID(e, elem)
 		}
 		e.ArrEnd()
 	}
@@ -292,11 +292,11 @@ func (s *CreateOrderRequest) Decode(d *jx.Decoder) error {
 		case "part_uuids":
 			requiredBitSet[0] |= 1 << 1
 			if err := func() error {
-				s.PartUuids = make([]string, 0)
+				s.PartUuids = make([]uuid.UUID, 0)
 				if err := d.Arr(func(d *jx.Decoder) error {
-					var elem string
-					v, err := d.Str()
-					elem = string(v)
+					var elem uuid.UUID
+					v, err := json.DecodeUUID(d)
+					elem = v
 					if err != nil {
 						return err
 					}
@@ -975,7 +975,7 @@ func (s *Order) encodeFields(e *jx.Encoder) {
 		e.FieldStart("part_uuids")
 		e.ArrStart()
 		for _, elem := range s.PartUuids {
-			e.Str(elem)
+			json.EncodeUUID(e, elem)
 		}
 		e.ArrEnd()
 	}
@@ -1047,11 +1047,11 @@ func (s *Order) Decode(d *jx.Decoder) error {
 		case "part_uuids":
 			requiredBitSet[0] |= 1 << 2
 			if err := func() error {
-				s.PartUuids = make([]string, 0)
+				s.PartUuids = make([]uuid.UUID, 0)
 				if err := d.Arr(func(d *jx.Decoder) error {
-					var elem string
-					v, err := d.Str()
-					elem = string(v)
+					var elem uuid.UUID
+					v, err := json.DecodeUUID(d)
+					elem = v
 					if err != nil {
 						return err
 					}

@@ -8,12 +8,12 @@ type PayOrderInput struct {
 }
 
 type PayOrderOutput struct {
-	TransactionUUID string
+	TransactionUUID uuid.UUID
 }
 
 type CreateOrderInput struct {
 	UserUUID  uuid.UUID
-	PartUuids []string
+	PartUUIDs []uuid.UUID
 }
 
 type CreateOrderOutput struct {

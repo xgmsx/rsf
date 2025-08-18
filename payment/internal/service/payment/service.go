@@ -6,10 +6,10 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/xgmsx/rsf/payment/internal/model"
-	"github.com/xgmsx/rsf/payment/internal/service"
+	def "github.com/xgmsx/rsf/payment/internal/service"
 )
 
-var _ service.PaymentService = (*paymentService)(nil)
+var _ def.PaymentService = (*paymentService)(nil)
 
 type paymentService struct{}
 

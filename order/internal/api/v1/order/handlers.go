@@ -8,16 +8,16 @@ import (
 
 	"github.com/xgmsx/rsf/order/internal/api/v1/converter"
 	"github.com/xgmsx/rsf/order/internal/model"
-	orderV1 "github.com/xgmsx/rsf/shared/pkg/openapi/order/v1"
+	genOrderV1 "github.com/xgmsx/rsf/shared/pkg/openapi/order/v1"
 )
 
 // CreateOrder implements shared/pkg/openapi/order/v1.
-func (h *orderApi) CreateOrder(ctx context.Context, req *orderV1.CreateOrderRequest) (orderV1.CreateOrderRes, error) {
+func (h *orderApi) CreateOrder(ctx context.Context, req *genOrderV1.CreateOrderRequest) (genOrderV1.CreateOrderRes, error) {
 	input := converter.CreateOrderInputFromRequest(*req)
 	output, err := h.orderService.CreateOrder(ctx, input)
 	if err != nil {
 		if errors.Is(err, model.ErrPartDoesNotExist) {
-			return &orderV1.BadRequestError{
+			return &genOrderV1.BadRequestError{
 				Code:    400,
 				Message: err.Error(),
 			}, nil
@@ -29,11 +29,11 @@ func (h *orderApi) CreateOrder(ctx context.Context, req *orderV1.CreateOrderRequ
 }
 
 // GetOrder implements shared/pkg/openapi/order/v1.
-func (h *orderApi) GetOrder(ctx context.Context, params orderV1.GetOrderParams) (orderV1.GetOrderRes, error) {
+func (h *orderApi) GetOrder(ctx context.Context, params genOrderV1.GetOrderParams) (genOrderV1.GetOrderRes, error) {
 	output, err := h.orderService.GetOrder(ctx, params.OrderUUID.String())
 	if err != nil {
 		if errors.Is(err, model.ErrOrderNotFound) {
-			return &orderV1.NotFoundError{
+			return &genOrderV1.NotFoundError{
 				Code:    http.StatusNotFound,
 				Message: "Order with UUID: '" + params.OrderUUID.String() + "' not found",
 			}, nil
@@ -45,24 +45,24 @@ func (h *orderApi) GetOrder(ctx context.Context, params orderV1.GetOrderParams) 
 }
 
 // PayOrder implements shared/pkg/openapi/order/v1.
-func (h *orderApi) PayOrder(ctx context.Context, req *orderV1.PayOrderRequest, params orderV1.PayOrderParams) (orderV1.PayOrderRes, error) {
+func (h *orderApi) PayOrder(ctx context.Context, req *genOrderV1.PayOrderRequest, params genOrderV1.PayOrderParams) (genOrderV1.PayOrderRes, error) {
 	input := converter.PayOrderInputFromRequest(*req, params)
 	output, err := h.orderService.PayOrder(ctx, input)
 	if err != nil {
 		if errors.Is(err, model.ErrOrderNotFound) {
-			return &orderV1.NotFoundError{
+			return &genOrderV1.NotFoundError{
 				Code:    http.StatusNotFound,
 				Message: "Order with UUID: '" + params.OrderUUID.String() + "' not found",
 			}, nil
 		}
 		if errors.Is(err, model.ErrPaymentMethodIsNotSupported) {
-			return &orderV1.BadRequestError{
+			return &genOrderV1.BadRequestError{
 				Code:    http.StatusBadRequest,
 				Message: fmt.Sprintf("Payment method %v is not supported", req.PaymentMethod),
 			}, nil
 		}
 
-		return &orderV1.InternalServerError{
+		return &genOrderV1.InternalServerError{
 			Code:    500,
 			Message: err.Error(),
 		}, err
@@ -72,17 +72,17 @@ func (h *orderApi) PayOrder(ctx context.Context, req *orderV1.PayOrderRequest, p
 }
 
 // CancelOrder implements shared/pkg/openapi/order/v1.
-func (h *orderApi) CancelOrder(ctx context.Context, params orderV1.CancelOrderParams) (orderV1.CancelOrderRes, error) {
+func (h *orderApi) CancelOrder(ctx context.Context, params genOrderV1.CancelOrderParams) (genOrderV1.CancelOrderRes, error) {
 	_, err := h.orderService.CancelOrder(ctx, params.OrderUUID.String())
 	if err != nil {
 		if errors.Is(err, model.ErrOrderNotFound) {
-			return &orderV1.NotFoundError{
+			return &genOrderV1.NotFoundError{
 				Code:    http.StatusNotFound,
 				Message: "Order with UUID: '" + params.OrderUUID.String() + "' not found",
 			}, nil
 		}
 		if errors.Is(err, model.ErrOrderAlreadyPaid) {
-			return &orderV1.NotFoundError{
+			return &genOrderV1.NotFoundError{
 				Code:    http.StatusConflict,
 				Message: "Order already paid and cannot be cancelled",
 			}, nil
@@ -90,5 +90,5 @@ func (h *orderApi) CancelOrder(ctx context.Context, params orderV1.CancelOrderPa
 		return nil, h.NewError(ctx, err)
 	}
 
-	return &orderV1.CancelOrderNoContent{}, nil
+	return &genOrderV1.CancelOrderNoContent{}, nil
 }

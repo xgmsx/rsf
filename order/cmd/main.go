@@ -13,15 +13,13 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 
 	orderApiV1 "github.com/xgmsx/rsf/order/internal/api/v1/order"
+	inventoryClient "github.com/xgmsx/rsf/order/internal/client/inventory"
+	paymentClient "github.com/xgmsx/rsf/order/internal/client/payment"
 	orderRepo "github.com/xgmsx/rsf/order/internal/repository/order"
 	orderService "github.com/xgmsx/rsf/order/internal/service/order"
-	orderV1 "github.com/xgmsx/rsf/shared/pkg/openapi/order/v1"
-	inventoryV1 "github.com/xgmsx/rsf/shared/pkg/proto/inventory/v1"
-	paymentV1 "github.com/xgmsx/rsf/shared/pkg/proto/payment/v1"
+	genOrderV1 "github.com/xgmsx/rsf/shared/pkg/openapi/order/v1"
 	"github.com/xgmsx/rsf/shared/pkg/swagger"
 )
 
@@ -32,31 +30,13 @@ const (
 )
 
 func main() {
-	paymentConn, err := grpc.NewClient(
-		"api-payment:50051",
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
-	)
-	if err != nil {
-		log.Fatalf("failed to connect to Payment service: %v\n", err)
-	}
-
-	inventoryConn, err := grpc.NewClient(
-		"api-inventory:50051",
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
-	)
-	if err != nil {
-		log.Fatalf("failed to connect to Inventory service: %v\n", err)
-	}
-
 	// Инициализируем grpc-клиенты к другим сервисам
-	paymentConn.Connect()
-	paymentClient := paymentV1.NewPaymentServiceClient(paymentConn)
-	inventoryConn.Connect()
-	inventoryClient := inventoryV1.NewInventoryServiceClient(inventoryConn)
+	paymentServiceClient := paymentClient.NewClient("api-payment:50051")
+	inventoryServiceClient := inventoryClient.NewClient("api-inventory:50051")
 
 	// Инициализируем слои приложения
 	repository := orderRepo.NewOrderRepository()
-	service := orderService.NewOrderService(repository, inventoryClient, paymentClient)
+	service := orderService.NewOrderService(repository, inventoryServiceClient, paymentServiceClient)
 	api := orderApiV1.NewOrderAPI(service)
 
 	// Инициализируем HTTP сервер
@@ -66,7 +46,7 @@ func main() {
 	r.Use(middleware.Timeout(10 * time.Second))
 
 	// Монтируем order API
-	orderApiRouter, err := orderV1.NewServer(api)
+	orderApiRouter, err := genOrderV1.NewServer(api)
 	if err != nil {
 		log.Fatalf("ошибка инициализации openapi.order.v1: %v", err)
 	}
@@ -87,10 +67,10 @@ func main() {
 	}
 
 	go func() {
-		log.Printf("🚀 HTTP-сервер запущен на порту %s\n", httpPort)
+		log.Printf("🚀 HTTP server listening on %s\n", httpPort)
 		err = server.ListenAndServe()
 		if err != nil && !errors.Is(err, http.ErrServerClosed) {
-			log.Printf("❌ Ошибка запуска сервера: %v\n", err)
+			log.Printf("❌ Failed to serve HTTP: %v\n", err)
 		}
 	}()
 

@@ -5,10 +5,10 @@ import (
 	"sync"
 
 	"github.com/xgmsx/rsf/order/internal/model"
-	"github.com/xgmsx/rsf/order/internal/repository"
+	def "github.com/xgmsx/rsf/order/internal/repository"
 )
 
-var _ repository.OrderRepository = (*orderRepository)(nil)
+var _ def.OrderRepository = (*orderRepository)(nil)
 
 type orderRepository struct {
 	mu     sync.RWMutex

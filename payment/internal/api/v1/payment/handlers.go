@@ -9,10 +9,10 @@ import (
 
 	"github.com/xgmsx/rsf/payment/internal/api/v1/converter"
 	"github.com/xgmsx/rsf/payment/internal/model"
-	paymentV1 "github.com/xgmsx/rsf/shared/pkg/proto/payment/v1"
+	genPaymentV1 "github.com/xgmsx/rsf/shared/pkg/proto/payment/v1"
 )
 
-func (h *paymentAPI) PayOrder(ctx context.Context, req *paymentV1.PayOrderRequest) (*paymentV1.PayOrderResponse, error) {
+func (h *paymentAPI) PayOrder(ctx context.Context, req *genPaymentV1.PayOrderRequest) (*genPaymentV1.PayOrderResponse, error) {
 	input := converter.PayInputFromRequest(req)
 	output, err := h.service.PayOrder(ctx, input)
 	if err != nil {

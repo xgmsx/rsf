@@ -21,7 +21,7 @@ import (
 	partRepo "github.com/xgmsx/rsf/inventory/internal/repository/part"
 	partService "github.com/xgmsx/rsf/inventory/internal/service/part"
 	"github.com/xgmsx/rsf/shared/pkg/interceptor"
-	inventoryV1 "github.com/xgmsx/rsf/shared/pkg/proto/inventory/v1"
+	genInventoryV1 "github.com/xgmsx/rsf/shared/pkg/proto/inventory/v1"
 	"github.com/xgmsx/rsf/shared/pkg/swagger"
 )
 
@@ -53,7 +53,7 @@ func main() {
 			grpc.UnaryServerInterceptor(interceptor.LoggerInterceptor()),
 		),
 	)
-	inventoryV1.RegisterInventoryServiceServer(server, api)
+	genInventoryV1.RegisterInventoryServiceServer(server, api)
 	reflection.Register(server)
 
 	// Запускаем gRPC сервер
@@ -73,7 +73,7 @@ func main() {
 
 		// Создаем мультиплексор для HTTP запросов в gRPC-gateway
 		mux := runtime.NewServeMux()
-		err = inventoryV1.RegisterInventoryServiceHandlerFromEndpoint(
+		err = genInventoryV1.RegisterInventoryServiceHandlerFromEndpoint(
 			ctx,
 			mux,
 			fmt.Sprintf("localhost:%d", grpcPort),
