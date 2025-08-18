@@ -18,7 +18,7 @@ import (
 	"google.golang.org/grpc/reflection"
 
 	paymentApiV1 "github.com/xgmsx/rsf/payment/internal/api/v1/payment"
-	"github.com/xgmsx/rsf/payment/internal/service/payment"
+	paymentService "github.com/xgmsx/rsf/payment/internal/service/payment"
 	"github.com/xgmsx/rsf/shared/pkg/interceptor"
 	genInventoryV1 "github.com/xgmsx/rsf/shared/pkg/proto/inventory/v1"
 	genPaymentV1 "github.com/xgmsx/rsf/shared/pkg/proto/payment/v1"
@@ -43,7 +43,7 @@ func main() {
 	}()
 
 	// Инициализируем слои приложения
-	service := payment.NewService()
+	service := paymentService.NewService()
 	api := paymentApiV1.NewPaymentAPI(service)
 
 	// Инициализируем gRPC сервер
