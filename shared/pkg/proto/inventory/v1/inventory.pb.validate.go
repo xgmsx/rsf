@@ -57,10 +57,10 @@ func (m *GetPartRequest) validate(all bool) error {
 
 	var errors []error
 
-	if utf8.RuneCountInString(m.GetUuid()) != 24 {
+	if utf8.RuneCountInString(m.GetUuid()) != 36 {
 		err := GetPartRequestValidationError{
 			field:  "Uuid",
-			reason: "value length must be 24 runes",
+			reason: "value length must be 36 runes",
 		}
 		if !all {
 			return err
@@ -563,6 +563,23 @@ func (m *PartsFilter) validate(all bool) error {
 
 	var errors []error
 
+	for idx, item := range m.GetUuids() {
+		_, _ = idx, item
+
+		if utf8.RuneCountInString(item) != 36 {
+			err := PartsFilterValidationError{
+				field:  fmt.Sprintf("Uuids[%v]", idx),
+				reason: "value length must be 36 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return PartsFilterMultiError(errors)
 	}
@@ -661,7 +678,17 @@ func (m *Part) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Uuid
+	if utf8.RuneCountInString(m.GetUuid()) != 36 {
+		err := PartValidationError{
+			field:  "Uuid",
+			reason: "value length must be 36 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+
+	}
 
 	// no validation rules for Name
 

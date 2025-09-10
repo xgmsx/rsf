@@ -7,8 +7,8 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/xgmsx/rsf/inventory/internal/api/v1/converter"
 	"github.com/xgmsx/rsf/inventory/internal/model"
+	"github.com/xgmsx/rsf/inventory/internal/model/converter"
 	genInventoryV1 "github.com/xgmsx/rsf/shared/pkg/proto/inventory/v1"
 )
 
@@ -27,17 +27,28 @@ func (h *partAPI) GetPart(ctx context.Context, req *genInventoryV1.GetPartReques
 }
 
 func (h *partAPI) ListParts(ctx context.Context, req *genInventoryV1.ListPartsRequest) (*genInventoryV1.ListPartsResponse, error) {
-	filter := converter.PartFilterFromProto(req.Filter)
-	parts, err := h.service.ListParts(ctx, filter)
+	err := req.ValidateAll()
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "validate error: %v", err)
+	}
+
+	parts, err := h.service.ListParts(ctx, converter.PartFilterFromProto(req.Filter))
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "internal error: %v", err)
 	}
 
+	if len(parts) == 0 {
+		return nil, status.Errorf(codes.NotFound, "not found error")
+	}
+
 	resp := &genInventoryV1.ListPartsResponse{
-		Parts: make([]*genInventoryV1.Part, 0, len(parts)),
+		Parts: converter.PartsToProto(parts),
 	}
-	for _, part := range parts {
-		resp.Parts = append(resp.Parts, converter.PartToProto(part))
+
+	err = resp.Validate()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "internal error: %v", err)
 	}
+
 	return resp, nil
 }

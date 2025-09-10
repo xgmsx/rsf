@@ -1,12 +1,17 @@
 version: '3'
+silent: true
 
 vars:
   MODULES: inventory order payment
   GCI_PREFIX: github.com/xgmsx/rsf
+  BIN_DIR: '{{.ROOT_DIR}}/bin'
+  COVERAGE_DIR: '{{.ROOT_DIR}}/coverage'
+  COVERAGE_FILE: total.out
 
   # версии утилит
   GO_VERSION: '1.24'
   GCI_VERSION: 'v0.13.6'
+  MOCKERY_VERSION: 'v2.53.3'
   GOFUMPT_VERSION: 'v0.8.0'
   GOLANGCI_LINT_VERSION: 'v2.1.5'
   MERGE_OPENAPI_VERSION: 'v1.0.0'
@@ -27,8 +32,8 @@ vars:
   PROTO_GEN_VALIDATE_VERSION: 'v1.2.1'
 
   # пути к исполняемым файлам
-  BIN_DIR: '{{.ROOT_DIR}}/bin'
   GCI: '{{.BIN_DIR}}/gci'
+  MOCKERY: '{{.BIN_DIR}}/mockery'
   GOFUMPT: '{{.BIN_DIR}}/gofumpt'
   GOLANGCI_LINT: '{{.BIN_DIR}}/golangci-lint'
   MERGE_OPENAPI: '{{.BIN_DIR}}/go-merge-openapi'
@@ -47,6 +52,63 @@ vars:
   PROTO_GEN_VALIDATE_DIR: '{{.BIN_DIR}}/proto-libs/gen_validate'
 
 tasks:
+
+  cov:
+    desc: "Выводим отчет о покрытии тестами бизнес-логики"
+    cmds:
+      - |
+        echo "🚀 Generating coverage report..."
+        rm -rf {{.COVERAGE_DIR}}
+        mkdir -p {{.COVERAGE_DIR}}
+        
+        ERR=0
+        for mod in {{.MODULES}}; do
+          echo "🧪 Тестирование модуля $mod"
+          
+          TARGET_PKGS=$(go list ./$mod/... \
+            | grep -vE '/(mocks|testdata|pkg|gen|proto|pb|cmd|model|repository)' \
+            | paste -sd "," -)
+
+          if [ -z "$TARGET_PKGS" ]; then
+            echo "⚠️ Нет подходящих пакетов для тестирования в $mod"
+            continue
+          fi
+        
+          go test -coverpkg="$TARGET_PKGS" \
+            -coverprofile={{.COVERAGE_DIR}}/$mod.out \
+            -covermode=atomic \
+            $(echo "$TARGET_PKGS" | tr "," " ") || ERR=1
+        done
+        
+        if [ $ERR -ne 0 ]; then
+          echo "❌ Тесты завершились с ошибкой"
+          exit $ERR
+        fi
+        
+        for mod in {{.MODULES}}; do
+          echo
+          echo "🧾 Test coverage in $mod:"
+          OUTFILE="{{.COVERAGE_DIR}}/$mod.out"
+          if [ -f "$OUTFILE" ]; then
+            printf " • %s: " "$mod"
+            go tool cover -func="$OUTFILE" | tail -n1
+          fi
+        done
+
+        echo
+        echo "🧾 Total test coverage:"
+        {
+          echo "mode: atomic"
+          find {{.COVERAGE_DIR}} -type f -name '*.out' ! -name '{{.COVERAGE_FILE}}' \
+            -exec grep -h -v "^mode:" {} +
+        } > {{.COVERAGE_DIR}}/{{.COVERAGE_FILE}}
+        go tool cover -func={{.COVERAGE_DIR}}/{{.COVERAGE_FILE}} | tail -n1
+        
+        echo
+        echo "🌐 Generating HTML coverage report..."
+        OUTPUT={{.COVERAGE_DIR}}/coverage.html
+        go tool cover -html={{.COVERAGE_DIR}}/total.out -o $OUTPUT
+        echo "📂 file://$OUTPUT"
 
   update:deps:
     desc: "Обновление зависимостей в go.mod во всех модулях"
@@ -122,6 +184,7 @@ tasks:
     cmds:
       - task: gen:openapi
       - task: gen:proto
+      - task: gen:mock
 
   gen:openapi:
     desc: "Генерация Go-кода из всех OpenAPI-деклараций с x-ogen"
@@ -186,7 +249,15 @@ tasks:
             done
           fi
         done
-        
+
+  gen:mock:
+    desc: "Генерация mock-файлов"
+    deps: [ install:mockery ]
+    cmds:
+      - |
+        echo '🧪 Generating mocks...'
+        {{.MOCKERY}}
+
   install:protoc:
     desc: "Устанавливает protoc в каталог bin"
     cmds:
@@ -316,3 +387,14 @@ tasks:
         }
     status:
       - test -x {{.GRPCURL}}
+
+  install:mockery:
+    desc: "Устанавливает mockery в каталог bin"
+    cmds:
+      - |
+        [ -f {{.MOCKERY}} ] || {
+          echo '📦 Устанавливаем mockery {{.MOCKERY_VERSION}}...'
+          GOBIN={{.BIN_DIR}} go install github.com/vektra/mockery/v2@{{.MOCKERY_VERSION}}
+        }
+    status:
+      - test -x {{.MOCKERY}}

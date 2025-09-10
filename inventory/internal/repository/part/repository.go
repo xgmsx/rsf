@@ -95,7 +95,7 @@ func (r *partsRepository) GetPart(_ context.Context, uuid string) (model.Part, e
 	return *part, nil
 }
 
-func (r *partsRepository) ListParts(_ context.Context, filter *model.PartsFilter) ([]model.Part, error) {
+func (r *partsRepository) ListParts(ctx context.Context, filter *model.PartsFilter) ([]model.Part, error) {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 	var result []model.Part

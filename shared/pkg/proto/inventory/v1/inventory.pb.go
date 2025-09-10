@@ -726,23 +726,24 @@ const file_v1_inventory_proto_rawDesc = "" +
 	"\n" +
 	"\x12v1/inventory.proto\x12\finventory.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x17validate/validate.proto\x1a\x1fgoogle/protobuf/timestamp.proto\".\n" +
 	"\x0eGetPartRequest\x12\x1c\n" +
-	"\x04uuid\x18\x01 \x01(\tB\b\xfaB\x05r\x03\x98\x01\x18R\x04uuid\"9\n" +
+	"\x04uuid\x18\x01 \x01(\tB\b\xfaB\x05r\x03\x98\x01$R\x04uuid\"9\n" +
 	"\x0fGetPartResponse\x12&\n" +
 	"\x04part\x18\x01 \x01(\v2\x12.inventory.v1.PartR\x04part\"E\n" +
 	"\x10ListPartsRequest\x121\n" +
 	"\x06filter\x18\x01 \x01(\v2\x19.inventory.v1.PartsFilterR\x06filter\"=\n" +
 	"\x11ListPartsResponse\x12(\n" +
-	"\x05parts\x18\x01 \x03(\v2\x12.inventory.v1.PartR\x05parts\"\xbc\x01\n" +
-	"\vPartsFilter\x12\x14\n" +
-	"\x05uuids\x18\x01 \x03(\tR\x05uuids\x12\x14\n" +
+	"\x05parts\x18\x01 \x03(\v2\x12.inventory.v1.PartR\x05parts\"\xcb\x01\n" +
+	"\vPartsFilter\x12#\n" +
+	"\x05uuids\x18\x01 \x03(\tB\r\xfaB\n" +
+	"\x92\x01\a\"\x05r\x03\x98\x01$R\x05uuids\x12\x14\n" +
 	"\x05names\x18\x02 \x03(\tR\x05names\x126\n" +
 	"\n" +
 	"categories\x18\x03 \x03(\x0e2\x16.inventory.v1.CategoryR\n" +
 	"categories\x125\n" +
 	"\x16manufacturer_countries\x18\x04 \x03(\tR\x15manufacturerCountries\x12\x12\n" +
-	"\x04tags\x18\x05 \x03(\tR\x04tags\"\xd5\x04\n" +
-	"\x04Part\x12\x12\n" +
-	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x12\n" +
+	"\x04tags\x18\x05 \x03(\tR\x04tags\"\xdf\x04\n" +
+	"\x04Part\x12\x1c\n" +
+	"\x04uuid\x18\x01 \x01(\tB\b\xfaB\x05r\x03\x98\x01$R\x04uuid\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x14\n" +
 	"\x05price\x18\x04 \x01(\x01R\x05price\x12%\n" +

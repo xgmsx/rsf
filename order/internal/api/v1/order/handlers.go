@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/xgmsx/rsf/order/internal/api/v1/converter"
 	"github.com/xgmsx/rsf/order/internal/model"
+	"github.com/xgmsx/rsf/order/internal/model/converter"
 	genOrderV1 "github.com/xgmsx/rsf/shared/pkg/openapi/order/v1"
 )
 

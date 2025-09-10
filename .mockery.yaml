@@ -1,0 +1,32 @@
+with-expecter: true
+dir: "{{.InterfaceDir}}/mocks"
+filename: "mock_{{.InterfaceNameSnake}}.go"
+outpkg: "mocks"
+mockname: "{{.InterfaceName}}"
+resolve-type-alias: False
+issue-845-fix: True
+
+packages:
+  github.com/xgmsx/rsf/inventory/internal/service:
+    config:
+      include-regex: ".*Service"
+
+  github.com/xgmsx/rsf/inventory/internal/repository:
+    config:
+      include-regex: ".*Repository"
+
+  github.com/xgmsx/rsf/order/internal/service:
+    config:
+      include-regex: ".*Service"
+
+  github.com/xgmsx/rsf/order/internal/repository:
+    config:
+      include-regex: ".*Repository"
+
+  github.com/xgmsx/rsf/payment/internal/service:
+    config:
+      include-regex: ".*Service"
+
+  github.com/xgmsx/rsf/payment/internal/repository:
+    config:
+      include-regex: ".*Repository"

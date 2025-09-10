@@ -41,6 +41,18 @@ func PartToProto(p model.Part) *genInventoryV1.Part {
 	}
 }
 
+func PartsToProto(parts []model.Part) []*genInventoryV1.Part {
+	if parts == nil {
+		return nil
+	}
+
+	partsProto := make([]*genInventoryV1.Part, len(parts))
+	for i := range parts {
+		partsProto[i] = PartToProto(parts[i])
+	}
+	return partsProto
+}
+
 func DimensionsToProto(d *model.Dimensions) *genInventoryV1.Dimensions {
 	if d == nil {
 		return nil

@@ -7,8 +7,8 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/xgmsx/rsf/payment/internal/api/v1/converter"
 	"github.com/xgmsx/rsf/payment/internal/model"
+	"github.com/xgmsx/rsf/payment/internal/model/converter"
 	genPaymentV1 "github.com/xgmsx/rsf/shared/pkg/proto/payment/v1"
 )
 

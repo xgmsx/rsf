@@ -28,7 +28,7 @@ service InventoryService {
 
 // Запрос на получение данных детали по UUID
 message GetPartRequest {
-  string uuid = 1 [(validate.rules).string.len = 24];
+  string uuid = 1 [(validate.rules).string.len = 36];
 }
 
 // Ответ на запрос получения данных детали
@@ -48,7 +48,7 @@ message ListPartsResponse {
 
 // Фильтр для поиска деталей
 message PartsFilter {
-  repeated string uuids = 1;
+  repeated string uuids = 1 [(validate.rules).repeated.items.string.len = 36];
   repeated string names = 2;
   repeated Category categories = 3;
   repeated string manufacturer_countries = 4;
@@ -57,7 +57,7 @@ message PartsFilter {
 
 // Структура представляющая собой деталь
 message Part {
-  string uuid = 1;
+  string uuid = 1 [(validate.rules).string.len = 36];
   string name = 2;
   string description = 3;
   double price = 4;
